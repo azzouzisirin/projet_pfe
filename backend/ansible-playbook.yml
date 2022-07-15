@@ -1,0 +1,40 @@
+---
+- name: "Build a container with ansible"
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: stop current running container
+      command: docker stop backend
+      ignore_errors: yes
+
+    - name: remove stopped container
+      command: docker rm backend
+      ignore_errors: yes
+
+    - name: remove backend_messanger
+      command: docker rmi backend_messanger
+      ignore_errors: yes
+
+    - name: remove backend_page
+      command: docker rmi backend_page
+      ignore_errors: yes
+
+    - name: remove backend_post
+      command: docker rmi backend_post
+      ignore_errors: yes
+
+    - name: remove backend_user
+      command: docker rmi backend_user
+      ignore_errors: yes
+
+    - name: build docker  using the Docker-compose
+      command:  docker-compose build
+
+    - name: tag Image to dockerhub
+      command: docker tag sirinee/backend backend
+
+    - name: Push Image to dockerhub
+      command: docker push sirinee/backend
+
+    - name: run container
+      command: docker-compose up

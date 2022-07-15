@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+
+
+  meet:
+    container_name: meet
+    stdin_open: true
+    tty: true
+    restart: always
+    build: ./meet
+    ports:
+      - '9800:9800'
+   
+   
+
+ 

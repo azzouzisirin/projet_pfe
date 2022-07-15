@@ -1,0 +1,14 @@
+
+.dashbord {
+    display: flex;
+
+
+}
+.Sidebar{
+    flex: 2;
+}
+ 
+.homeWidgets{
+    display: flex;
+    margin: 20px;
+}

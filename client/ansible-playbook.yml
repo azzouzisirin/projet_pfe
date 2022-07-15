@@ -1,0 +1,9 @@
+---
+- name: "Build a container with ansible"
+  hosts: localhost
+  connection: local
+  tasks:
+ 
+
+    - name: build docker image using the Dockerfile
+      command:  echo "hello world"

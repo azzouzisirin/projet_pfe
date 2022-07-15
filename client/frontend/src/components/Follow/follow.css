@@ -1,0 +1,28 @@
+.rightbarFollowButto{
+  margin-top: 30px;
+  margin-bottom: 10px;
+  margin-right: 20%;
+  border: none;
+  background-color: #1872f2;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  width:"400px";
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.buttonLike{
+  background-color: #1872f2;
+
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+  color: white;
+  text-align: center;
+
+}

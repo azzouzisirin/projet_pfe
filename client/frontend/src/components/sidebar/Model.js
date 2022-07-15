@@ -1,0 +1,168 @@
+import React, { useState, useEffect } from 'react'
+import { Grid, } from '@material-ui/core';
+import Controls from "../../components/controls/Controls";
+import { useForm, Form } from '../../components/useForm';
+import { useToast } from "@chakra-ui/toast";
+
+import { Input } from "@chakra-ui/input";
+const initialFValues = {
+  _id:'',
+  userId:'',
+  name: '',
+  desc: '',
+  profilePicture: '',
+  coverPicture: '',
+}
+export default function Model(props ) {
+  const toast = useToast();
+
+
+  const { addOrEdit, recordForEdit } = props
+  const [profilePicture, setprofilePicture] = useState();
+
+    const [picLoading, setprofilePictureLoading] = useState(false);
+
+  const validate = (fieldValues = values) => {
+    let temp = { ...errors }
+    if ('name' in fieldValues)
+        temp.name = fieldValues.name ? "" : "Ce champ est obligatoire."
+   
+        setErrors({
+        ...temp
+    })
+
+    if (fieldValues === values)
+        return Object.values(temp).every(x => x === "")
+}
+
+    const {
+      values,
+      setValues,
+      errors,
+      setErrors,
+      handleInputChange,
+      resetForm
+  } = useForm(initialFValues, true, validate);
+
+
+  useEffect(() => {
+    if (recordForEdit != null)
+        setValues({
+            ...recordForEdit
+        })
+}, [recordForEdit])
+
+const postDetails = (pics) => {
+    setprofilePictureLoading(true);
+    if (pics === undefined) {
+      toast({
+        title: "Please Select an Image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "chat-app");
+      data.append("cloud_name", "piyushproj");
+      fetch("https://api.cloudinary.com/v1_1/piyushproj/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setprofilePicture(data.url.toString());
+          console.log(profilePicture);
+
+          setprofilePictureLoading(false);
+        })
+
+        .catch((err) => {
+          console.log(err);
+          setprofilePictureLoading(false);
+        });
+    } else {
+      toast({
+        title: "Please Select an Image!",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setprofilePictureLoading(false);
+      return;
+    }
+  };
+
+
+   
+  const handleSubmit = e => {
+    e.preventDefault()
+    var user=JSON.parse(localStorage.getItem('user'))
+  var  id=user._id
+ 
+    values.userId=id
+    values.profilePicture=profilePicture
+    
+
+
+    if (validate()) {
+    addOrEdit(values, resetForm); 
+    }
+}
+
+
+    return (
+        <Form onSubmit={handleSubmit}>
+            <Grid container>
+                <Grid item xs={6}>
+                  <label>Nom de page</label>
+                    <Input
+                        name="name"
+                        label="Nom"
+                        value={values.name}
+
+                        onChange={handleInputChange}
+                        error={errors.name}
+                    />
+                    <label>Description</label>
+
+                  <Input
+                        name="desc"
+                        label="description"
+                        value={values.desc}
+
+                        onChange={handleInputChange}
+                        />
+                  
+                 
+
+                </Grid>
+                <Grid item xs={6}>
+               
+                <label>Photo de profil</label>
+
+                    <Controls.Input
+                         type="file"
+                         p={1.5}
+                         accept="image/*"
+                         onChange={(e) => postDetails(e.target.files[0])}
+                        />
+                 
+
+                    <div>
+                        <Controls.Button
+                            type="submit"
+                            text="créer" 
+                            isLoading={picLoading} />
+                        
+                    </div>
+                </Grid>
+            </Grid>
+        </Form>
+    )
+}

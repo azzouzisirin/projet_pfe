@@ -1,0 +1,98 @@
+version: '3.7'
+
+services:
+
+
+  post:
+    container_name: post
+    stdin_open: true
+
+    restart: always
+    build: ./post
+    ports:
+      - '8002:8002'
+   
+    networks:
+      - internal
+    depends_on:
+      - mongo
+  page:
+    container_name: page
+    restart: always
+    build: ./page
+    ports:
+      - '8003:8003'
+   
+    networks:
+      - internal
+    depends_on:
+      - mongo
+
+  messanger:
+    container_name: messanger
+    restart: always
+    build: ./messanger
+    ports:
+      - '8004:8004'
+    networks:
+      - internal
+    depends_on:
+      - mongo
+
+  user:
+    container_name: user
+    restart: always
+    build: ./user
+    ports:
+      - '8005:8005'
+   
+    networks:
+      - internal
+    depends_on:
+      - mongo
+
+
+
+  
+ 
+  
+  mongo:
+    container_name: mongo
+    image: mongo
+
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: node-app
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+      - mongo_config:/data/configdb
+    networks:
+      - internal
+
+
+  nginx:
+    restart: always
+    container_name: nginx
+
+    depends_on:
+      - post
+      - user
+      - page
+      - messanger
+    
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+         - 8000:80 
+    networks:
+         - internal
+
+networks:
+  internal:
+
+volumes:
+  mongo_data: {}
+  mongo_config: {}
